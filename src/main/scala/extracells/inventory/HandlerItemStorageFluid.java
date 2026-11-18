@@ -144,53 +144,37 @@ public class HandlerItemStorageFluid implements IMEInventoryHandler<IAEFluidStac
 			BaseActionSource src) {
 		if (input == null || !allowedByFormat(input.getFluid()))
 			return input;
-		IAEFluidStack notAdded = input.copy();
-		List<FluidStack> currentFluids = Lists.newArrayList(this.fluidStacks);
-		for (int i = 0; i < currentFluids.size(); i++) {
-			FluidStack currentStack = currentFluids.get(i);
-			if (notAdded != null && currentStack != null
-					&& input.getFluid() == currentStack.getFluid()) {
-				if (notAdded.getStackSize() <= freeBytes()) {
-					FluidStack toWrite = new FluidStack(currentStack.getFluid(),
-							currentStack.amount + (int) notAdded.getStackSize());
-					currentFluids.set(i, toWrite);
-					if (mode == Actionable.MODULATE) {
-						writeFluidToSlot(i, toWrite);
-					}
-					notAdded = null;
-				} else {
-					FluidStack toWrite = new FluidStack(currentStack.getFluid(), currentStack.amount + freeBytes());
-					currentFluids.set(i, toWrite);
-					if (mode == Actionable.MODULATE) {
-						writeFluidToSlot(i, toWrite);
-					}
-					notAdded.setStackSize(notAdded.getStackSize() - freeBytes());
-				}
+
+		long requested = input.getStackSize();
+		long available = Math.min(requested, freeBytes());
+		if (available <= 0)
+			return input;
+
+		int accepted = (int) available;
+		int slot = -1;
+		for (int i = 0; i < this.fluidStacks.size(); i++) {
+			FluidStack current = this.fluidStacks.get(i);
+			if (current != null && current.getFluid() == input.getFluid()) {
+				slot = i;
+				break;
 			}
+			if (current == null && slot < 0)
+				slot = i;
 		}
-		for (int i = 0; i < currentFluids.size(); i++) {
-			FluidStack currentStack = currentFluids.get(i);
-			if (notAdded != null && currentStack == null) {
-				if (input.getStackSize() <= freeBytes()) {
-					FluidStack toWrite = notAdded.getFluidStack();
-					currentFluids.set(i, toWrite);
-					if (mode == Actionable.MODULATE) {
-						writeFluidToSlot(i, toWrite);
-					}
-					notAdded = null;
-				} else {
-					FluidStack toWrite = new FluidStack(notAdded.getFluid(), freeBytes());
-					currentFluids.set(i, toWrite);
-					if (mode == Actionable.MODULATE) {
-						writeFluidToSlot(i, toWrite);
-					}
-					notAdded.setStackSize(notAdded.getStackSize() - freeBytes());
-				}
-			}
-		}
-		if (notAdded == null || !notAdded.equals(input))
+		if (slot < 0)
+			return input;
+
+		if (mode == Actionable.MODULATE) {
+			FluidStack current = this.fluidStacks.get(slot);
+			FluidStack stored = current == null
+					? input.copy().setStackSize(accepted).getFluidStack()
+					: current.copy();
+			if (current != null)
+				stored.amount += accepted;
+			writeFluidToSlot(slot, stored);
 			requestSave();
-		return notAdded;
+		}
+		return accepted == requested ? null : input.copy().setStackSize(requested - accepted);
 	}
 
 	@Override
