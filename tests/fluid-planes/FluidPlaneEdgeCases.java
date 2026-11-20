@@ -199,11 +199,22 @@ final class FluidPlaneEdgeCases {
             if (!facts.containsKey("unloaded")) {
                 if (bank.world.theChunkProviderServer.chunkExists(x, z))
                     return false;
+                // The chunk has been unregistered, but the Anvil write can still be queued.
+                bank.world.getSaveHandler().flush();
                 facts.put("unloaded", true);
                 suite.fixture.force(bank.x, bank.z);
+                return false;
+            }
+            if (!facts.containsKey("reloaded")) {
+                if (bank.world.getTileEntity(bank.x, bank.y, bank.z) == null
+                        || bank.world.getTileEntity(bank.x, bank.y, bank.z - 1) == null) {
+                    suite.detail = "Waiting for the persisted controller and drive after chunk reload";
+                    return false;
+                }
                 bank.physical = suite.fixture.restore(bank.index);
                 bank.firstActive = -1;
                 check(bank.plane() != bank.previous, "Original plane survived the chunk unload");
+                facts.put("reloaded", true);
                 return false;
             }
             if (!bank.ready())
