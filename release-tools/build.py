@@ -16,7 +16,11 @@ ROOT = Path(__file__).resolve().parents[1]
 INPUTS = Path(__file__).with_name("inputs.json")
 BASE = "ExtraCells-1.7.10-2.3.14b200.jar"
 REMAPPER_SHA256 = "42ad9fb7d7ac95101a6203fe10c84d7e21fe3ea06fa05b145c4e21b34c9ccaee"
-METADATA = {"mcmod.info", "version.properties", "META-INF/MANIFEST.MF"}
+DRIVE_FRONT = "assets/extracells/textures/blocks/hardmedrive.face.png"
+RETIRED_CLASSES = {"client": frozenset({
+    "extracells/render/block/RendererHardMEDrive$Icon.class",
+    "extracells/render/block/RendererHardMEDrive$RenderInformation.class",
+})}
 
 
 def sha(path):
@@ -51,7 +55,7 @@ def compile_sources(side, class_dir, classpath, args):
         ], check=True)
 
 
-def package(base_path, patch_path, output, version, side):
+def package(base_path, patch_path, output, version, side, retired):
     with ZipFile(base_path) as base, ZipFile(patch_path) as patch, ZipFile(output, "w", ZIP_DEFLATED) as out:
         replacements = {name: patch.read(name) for name in patch.namelist() if name.endswith(".class")}
         assert replacements and all(name.startswith(("extracells/", "com/gamerforea/extracells/"))
@@ -66,19 +70,26 @@ def package(base_path, patch_path, output, version, side):
             f"ExtraCells-Distribution: {side}\r\nExtraCells-Base: 2.3.14b200\r\n\r\n"
         ).encode()
 
+        if side == "client":
+            # The b200 front leaves transparent slots for the retired renderer.
+            replacements[DRIVE_FRONT] = (ROOT / "src/main/resources" / DRIVE_FRONT).read_bytes()
+
         touched = set(replacements)
+        assert retired.isdisjoint(touched) and retired <= set(base.namelist())
         for entry in base.infolist():
             name = entry.filename
+            if name in retired:
+                continue
             data = replacements.pop(name) if name in replacements else base.read(entry)
             out.writestr(entry, data)
         for name, data in sorted(replacements.items()):
             out.writestr(name, data)
     with ZipFile(base_path) as base, ZipFile(output) as out:
         assert out.testzip() is None
-        assert set(out.namelist()) == set(base.namelist()) | touched
-        for name in set(base.namelist()) - touched:
+        assert set(out.namelist()) == (set(base.namelist()) - retired) | touched
+        for name in set(base.namelist()) - touched - retired:
             assert base.read(name) == out.read(name), name
-    return sorted(touched - METADATA)
+    return sorted(name for name in touched if name.endswith(".class"))
 
 
 def build(side, lock, version, args):
@@ -102,20 +113,22 @@ def build(side, lock, version, args):
         patch = tmp / "overlay-srg.jar"
         reobfuscate(dev, patch, classpath, args)
         output = args.output / f"ExtraCells-1.7.10-{version}-{side}.jar"
-        overlay = package(libraries / BASE, patch, output, version, side)
+        retired = RETIRED_CLASSES.get(side, frozenset())
+        overlay = package(libraries / BASE, patch, output, version, side, retired)
         expected = args.inputs / side / BASE
         assert sha(expected) == lock["supplied_jar_sha256"], expected
         with ZipFile(expected) as archived, ZipFile(output) as rebuilt, ZipFile(libraries / BASE) as base:
             assert set(archived.namelist()) - set(rebuilt.namelist()) <= {
-                name for name in archived.namelist() if name.endswith("/")}, side
+                name for name in archived.namelist() if name.endswith("/")} | retired, side
             recorded_changes = {name for name in archived.namelist() if name.endswith(".class")
                                 and (name not in base.namelist() or archived.read(name) != base.read(name))}
-            assert recorded_changes <= set(overlay), recorded_changes - set(overlay)
+            assert recorded_changes <= set(overlay) | retired, recorded_changes - set(overlay) - retired
             if version == "1.0.0":
                 assert set(overlay) <= set(archived.namelist()), set(overlay) - set(archived.namelist())
 
     print(f"{side} {version}  {sha(output)}  {output.name}", flush=True)
     return side, dict(jar=output.name, sha256=sha(output), overlay_classes=overlay,
+                      retired_classes=sorted(retired),
                       source_archive_sha256=lock["sources_archive_sha256"],
                       supplied_jar_sha256=lock["supplied_jar_sha256"])
 
