@@ -2,7 +2,7 @@
 
 The version in `VERSION` identifies this release line. The `server` source overlay comes from the supplied FakePlayers archive and the `client` overlay comes from the supplied Client archive. Unchanged Extra Cells classes and resources come from the b200 archive referenced in both source projects. The build compiles each overlay against its supplied development libraries, remaps the result to SRG and packages it with the pinned b200 runtime. It changes Forge's version metadata to the release version. The included manifests record the source archive and runtime binary checksums.
 
-The FakePlayers server build depends on the server's EventHelper installation. The client build has its own rendering and pattern changes and uses the client overlay.
+The FakePlayers server build depends on the server's EventHelper installation. The Crucible fixture uses EventHelper 1.11. The client build has its own rendering and pattern changes and uses the client overlay.
 
 ## Inputs
 
@@ -28,6 +28,7 @@ python3 tests/fluid-planes/verify.py \
   --crucible "$CRUCIBLE_54" --java8 "$JAVA8/bin" \
   --mcp-srg "$MCP_SRG" --special-source "$SPECIAL_SOURCE" \
   --fixture-mods "$FLUID_FIXTURE_MODS" --selective-jar "$SELECTIVE_102" \
-  --classpath "$MC1710_MCP_CLASSPATH" \
-  --stock-eventhelper "$INPUTS/server/sources/lib/EventHelper-1.6-dev.jar"
+  --classpath "$MC1710_MCP_CLASSPATH"
 ```
+
+The supplied EventHelper 1.6 development archive is a compile input. When run on the clean Crucible fixture, 1.6 requires additional WorldGuard setup and throws in `WGReflection.setWG` during startup. The verified runs use EventHelper 1.11 with both AE2 builds.
