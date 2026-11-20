@@ -147,6 +147,12 @@ final class FluidPlaneEdgeCases {
             if (!bank.ready())
                 return false;
             DrainState source = bank.fixtureSource();
+            source.failSimulation = true;
+            bank.plane().onNeighborChanged();
+            source.failSimulation = false;
+            check(source.calls == 0, "Failed simulation attempted an actual drain");
+            bank.expect(facts, "after_simulation_exception", 0, 1000, 0);
+
             source.beforeDrain = () -> { throw new IllegalStateException("fixture drain failure"); };
             try {
                 bank.plane().onNeighborChanged();
@@ -390,6 +396,7 @@ final class FluidPlaneEdgeCases {
         int drainLimit = 1000;
         int calls;
         int nestedNotifications;
+        boolean failSimulation;
         FunctionalRegression.Action beforeDrain;
     }
 
@@ -406,8 +413,11 @@ final class FluidPlaneEdgeCases {
             DrainState state = states.get(x);
             if (state == null || state.remaining == 0)
                 return null;
-            if (!doDrain)
+            if (!doDrain) {
+                if (state.failSimulation)
+                    throw new NullPointerException("fixture drain simulation failure");
                 return new FluidStack(getFluid(), state.remaining);
+            }
             ++state.calls;
             if (state.calls == 1) {
                 for (int i = 0; i < 3; ++i) {
