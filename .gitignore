@@ -10,3 +10,12 @@
 !/build.bat
 !/build.sh
 !/build.properties
+!/VERSION
+!/client
+!/server
+!/common
+!/release-tools
+!/tests
+/client/lib/
+/server/lib/
+__pycache__/

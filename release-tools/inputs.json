@@ -1,0 +1,49 @@
+{
+  "client": {
+    "archive": {
+      "file": "ExtraCells-1.7.10-Client.7z",
+      "sha256": "9df35e2be704fba8c90767d27f84d73fa0d65a94a426f9d3e1293d81e3718662"
+    },
+    "supplied_jar_sha256": "233e691d3d15779668416de31a10cd5531c9b7466a10921851761bf5fdb08834",
+    "sources_archive_sha256": "4fc4a9486d3a8ff27e34d58e4e7fc1140a2ff7de08d65e165336440a9dd6f22e",
+    "lib": {
+      "CoFHCore-[1.7.10]3.1.0-323-dev.jar": "c366ac7ac5cd8f37cfc5dfe1d467d3cce87034856318634ed94ee62dd5abb689",
+      "CodeChickenCore-1.7.10-1.0.4.29-dev.jar": "a1f382d0f20e1204ca0fc69562d93be3e55357039abae936f663edc71afe5c79",
+      "CodeChickenLib-1.7.10-1.1.3.140-dev.jar": "bf61e8305e4f2b8a2a9b73228cd405f023f30b5fd732cc6ebd756e8cd948d379",
+      "DragonAPI-1.7.10-V13b-dev.jar": "37d3d17cab6ded4b55566d005c87b2af4cd5aab4f727a559970f27b39e6a8a0d",
+      "ExtraCells-1.7.10-2.3.14b200-dev.jar": "37aa6bee45a7f0592babe50b8976f0a22061d9352f4e4567913d695a144776e2",
+      "ExtraCells-1.7.10-2.3.14b200.jar": "bb7634c184ab1c652ab227bfff29f1557791e17da763553e31ad5e50cbafe95a",
+      "ForgeMultipart-1.7.10-1.2.0.347-dev.jar": "86894f43aba8c16c376c2e0fe500211ed03714c9f2508ffd854052784123418b",
+      "MekanismAPI-1.7.10-8.1.9.265-dev.jar": "830d6379367108480963a20bf47307c80a7dbe742a0401953fc59e8f51fc6b81",
+      "NotEnoughItems-1.7.10-1.0.3.74-dev.jar": "cc83fa26cb2eca25ea16e301404abe1c24d57eae0dade096e04733cd780ae7b1",
+      "RotaryCraftAPI-1.7.1-V13a-dev.jar": "614b2fd1ef4d4c17351e9b826cb196d329800f0edea6288b6a352f1aba786402",
+      "appliedenergistics2-rv3-beta-6-dev.jar": "cf9b487613c9afba31ef4f64c962752fc2dfe88fd0bf892c1a5121d9acb01b38",
+      "buildcraft-7.1.16-dev.jar": "cf0438909e636b0ec390c4e2485252423bcd053ac8f490fa95557a6e38c52db3",
+      "industrialcraft-2-2.2.817-experimental-dev.jar": "f63e4aa192dde458735deb51de3d8c9f4c5f013c6fd9b957bdc75f3ca309036d"
+    }
+  },
+  "server": {
+    "archive": {
+      "file": "ExtraCells-1.7.10-FakePlayers.7z",
+      "sha256": "4958fd47a9967d50b55441146b8f66612c5898d6affa5e6186728b15f89c602d"
+    },
+    "supplied_jar_sha256": "cf2937029e5ddc62f966e30810420344bd157f1eadcee1d25cb19c47209ceb08",
+    "sources_archive_sha256": "b703a3c806fdb5b34318cb44c61bb7ee807a54aceb1aece55ed67dab5a4e8d6b",
+    "lib": {
+      "CoFHCore-[1.7.10]3.1.0-323-dev.jar": "c366ac7ac5cd8f37cfc5dfe1d467d3cce87034856318634ed94ee62dd5abb689",
+      "CodeChickenCore-1.7.10-1.0.4.29-dev.jar": "a1f382d0f20e1204ca0fc69562d93be3e55357039abae936f663edc71afe5c79",
+      "CodeChickenLib-1.7.10-1.1.3.140-dev.jar": "bf61e8305e4f2b8a2a9b73228cd405f023f30b5fd732cc6ebd756e8cd948d379",
+      "DragonAPI-1.7.10-V13b-dev.jar": "37d3d17cab6ded4b55566d005c87b2af4cd5aab4f727a559970f27b39e6a8a0d",
+      "EventHelper-1.6-dev.jar": "332120f63ad79bf1b8d7f6f86d6de3a2c4691e4d8f3025eb20c677fce8a457e4",
+      "ExtraCells-1.7.10-2.3.14b200-dev.jar": "37aa6bee45a7f0592babe50b8976f0a22061d9352f4e4567913d695a144776e2",
+      "ExtraCells-1.7.10-2.3.14b200.jar": "bb7634c184ab1c652ab227bfff29f1557791e17da763553e31ad5e50cbafe95a",
+      "ForgeMultipart-1.7.10-1.2.0.347-dev.jar": "86894f43aba8c16c376c2e0fe500211ed03714c9f2508ffd854052784123418b",
+      "MekanismAPI-1.7.10-8.1.9.265-dev.jar": "830d6379367108480963a20bf47307c80a7dbe742a0401953fc59e8f51fc6b81",
+      "NotEnoughItems-1.7.10-1.0.3.74-dev.jar": "cc83fa26cb2eca25ea16e301404abe1c24d57eae0dade096e04733cd780ae7b1",
+      "RotaryCraftAPI-1.7.1-V13a-dev.jar": "614b2fd1ef4d4c17351e9b826cb196d329800f0edea6288b6a352f1aba786402",
+      "appliedenergistics2-rv3-beta-6-dev.jar": "cf9b487613c9afba31ef4f64c962752fc2dfe88fd0bf892c1a5121d9acb01b38",
+      "buildcraft-7.1.16-dev.jar": "cf0438909e636b0ec390c4e2485252423bcd053ac8f490fa95557a6e38c52db3",
+      "industrialcraft-2-2.2.817-experimental-dev.jar": "f63e4aa192dde458735deb51de3d8c9f4c5f013c6fd9b957bdc75f3ca309036d"
+    }
+  }
+}

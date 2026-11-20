@@ -1,3 +1,9 @@
+## Minecraft 1.7.10 releases
+
+The `master` release line builds the supplied FakePlayers server and client distributions over Extra Cells 2.3.14b200. Each side retains its own source overlay. Use the JAR for your side from [Releases](https://github.com/vvmax/ExtraCells/releases).
+
+[Build and Crucible verification instructions](release-tools/README.md).
+
 ExtraCells 2
 ==========
 
