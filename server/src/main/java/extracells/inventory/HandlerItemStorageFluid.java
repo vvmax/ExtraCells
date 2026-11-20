@@ -254,7 +254,7 @@ public class HandlerItemStorageFluid implements IMEInventoryHandler<IAEFluidStac
 				}
 			}
 		}
-		if (notAdded == null || !notAdded.equals(input))
+		if (mode == Actionable.MODULATE && (notAdded == null || notAdded.getStackSize() < input.getStackSize()))
 			this.requestSave();
 		return notAdded;
 	}

@@ -191,7 +191,11 @@ def main():
                         help="EventHelper 1.6 development archive from the FakePlayers project")
     parser.add_argument("--classpath", required=True, help="MCP Forge 1.7.10 JAR and compile dependencies")
     parser.add_argument("--version", choices=["1.0.0", "1.0.1"], required=True)
+    parser.add_argument("--edge-only", action="store_true",
+                        help="Run the edge and restart suites against the fixed release")
     args = parser.parse_args()
+    if args.edge_only and args.version != "1.0.1":
+        parser.error("--edge-only requires a fixed release")
     args.work_dir.mkdir(parents=True, exist_ok=True)
     assert sha(args.special_source) == REMAPPER_SHA
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.audit, text=True).strip()
@@ -237,16 +241,17 @@ def main():
         ec = args.mod_dir / f"ExtraCells-1.7.10-{args.version}-{side}.jar"
         production = [ae2, ec, *mods]
         name = f"{label}-{side}"
-        world = init_world(r, args, name, fixture, production, helper)
-        (world / "mods/1.7.10/EventHelper.jar").unlink()
         version = "-Dec.version=" + args.version
-        report = test_run(r, args, world, [version, "-Dae2.fluidplane.tests=true",
-                          "-Dae2.fluidplane.fluids=" + ",".join(FLUIDS)], fixture, production, helper)
-        report["provenance"] = provenance
-        write_json(args.work_dir / (name + ".json"), report)
-        validate_basic(report, args.version == "1.0.0")
-        amounts = [item["recovered_mb"] for item in report["result"]["facts"].values()]
-        print(f"{args.version} {name} verified {amounts}", flush=True)
+        if not args.edge_only:
+            world = init_world(r, args, name, fixture, production, helper)
+            (world / "mods/1.7.10/EventHelper.jar").unlink()
+            report = test_run(r, args, world, [version, "-Dae2.fluidplane.tests=true",
+                              "-Dae2.fluidplane.fluids=" + ",".join(FLUIDS)], fixture, production, helper)
+            report["provenance"] = provenance
+            write_json(args.work_dir / (name + ".json"), report)
+            validate_basic(report, args.version == "1.0.0")
+            amounts = [item["recovered_mb"] for item in report["result"]["facts"].values()]
+            print(f"{args.version} {name} verified {amounts}", flush=True)
         if args.version == "1.0.0":
             return
         name += "-edge"
